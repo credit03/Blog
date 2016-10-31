@@ -1,0 +1,172 @@
+{{template "header" .}}
+<title>个人中心</title>
+<link href="/static/css/font-awesome.min.css" rel="stylesheet">
+<link href="/static/css/animate.css" rel="stylesheet">
+</head>
+<body>
+
+{{template "navbar" .}}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="blogs">
+                <div class="text-center">
+                    <h1>个人中心</h1>
+                    <p>修改，删除，查看操作
+                    </p>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <section id="about-us">
+                <div class="container">
+                    <!-- our-team -->
+                    <div class="team">
+                        <div class="row clearfix fadeInDown">
+                            <div class="col-md-4 col-sm-6">
+                                <div class="single-profile-top wow fadeInDown" data-wow-duration="1000ms"
+                                     data-wow-delay="300ms">
+                                    <div class="media">
+                                        <div class="pull-left">
+                                            <a href="#"><img class="media-object" width="128px" height="128px"
+                                                             src="{{(index .PostArr 0).Author.Pic}}" alt=""></a>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4>个人资料</h4>
+                                            <h5>{{(index .PostArr 0).Author.Name}}</h5>
+                                            <ul class="tag clearfix">
+                                                <li class="btn">小编</li>
+                                                <li class="btn">普通会员</li>
+                                                <li class="btn">技术</li>
+                                            </ul>
+
+                                            <ul class="social_icons">
+                                                <li><a href="#"><i class="fa fa-weibo"></i></a></li>
+
+                                            </ul>
+                                        </div>
+                                    </div><!--/.media -->
+                                    <p>签名：职业在于自个选择</p>
+                                </div>
+                            </div><!--/.col-lg-4 -->
+                        </div>
+                    </div>
+                </div><!--/.container-->
+            </section><!--/about-us-->
+
+        </div>
+
+        <div class="col-md-8">
+
+            <div class="row">
+
+                <div class="col-md-8 col-md-offset-2">
+                    {{if gt (.PostArr|len) 0}}
+                    {{range .PostArr}}
+                    {{template "contentitem" .}}
+                    {{end}}
+                    {{else}}
+                    <h1>你内容空空...</h1>
+                    {{end}}
+                </div>
+            </div>
+
+            <div class="text-center">
+                <div class="row">
+                    {{if gt .PageLimit.IndexCount 1}}
+                    <nav>
+                        <ul class="pagination">
+                            {{if ge .PageLimit.CurrentIndex 2}}
+                            <li>
+                                <a href='{{urlfor "CategoryController.PageIndex"}}?form=usercenter&op=Previous&index={{.PageLimit.CurrentIndex}}'><span
+                                        aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a>
+                            </li>
+                            {{end}}
+                            {{range $i,$v:=.PageLimit.IndexArr}}
+                            <li {{if eq $v $.PageLimit.CurrentIndex}}class="active" {{end}}><a
+                                    href='{{urlfor "CategoryController.PageIndex"}}?form=usercenter&op=Index&index={{$v}}'
+                                    selectCurr="{{$.PageLimit.CurrentIndex}}" value="{{$v}}"
+                                    onclick="return Eq(this)">{{$v}}</a></li>
+                            {{end}}
+                            {{if lt .PageLimit.CurrentIndex .PageLimit.IndexCount}}
+                            <li>
+                                <a href='{{urlfor "CategoryController.PageIndex"}}?form=usercenter&op=Next&index={{.PageLimit.CurrentIndex}}'><span
+                                        aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a>
+                            </li>
+                            {{end}}
+                        </ul>
+                    </nav>
+                    {{else}}
+                    <h1>全部文章加载完毕</h1>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+{{template "footer" .}}
+<script type="text/javascript">
+
+    function Eq(t) {
+        if ($(t).attr("selectCurr") == $(t).attr("value")) {
+            return false;
+        }
+        return true;
+    }
+
+    function OnDelte(va) {
+        var b = window.confirm("是否删除该文章 \"" + va.title + "\"");
+        return b;
+    }
+</script>
+</body>
+</html>
+
+
+{{define "contentitem"}}
+<article>
+    <div class="post-image">
+        <div class="post-heading">
+            <h2><a href="/browse_category?id={{.Id}}">{{ .Title}}</a></h2>
+        </div>
+    </div>
+    {{template "itemfooter" .}}
+</article>
+<hr>
+{{end}}
+
+{{define "itemfooter"}}
+<p>
+    {{.Describe}}
+</p>
+<div class="container">
+    <ul class="list-inline">
+        <li><i class="fa fa-calendar"></i> {{.Created}}</li>
+        <li><i class="fa fa-user"></i><a href="#"> {{.Author.Name}}</a></li>
+        {{if eq .SectionType 0}}
+        <li><i class="fa fa-folder-open"></i> 生活</li>
+        {{else}}
+        {{if eq .SectionType 1}}
+        <li><i class="fa fa-folder-open"></i> 科技</li>
+        {{else}}
+        {{if eq .SectionType 2}}
+        <li><i class="fa fa-folder-open"></i> 其他</li>
+        {{end}}
+        {{end}}
+        {{end}}
+        <li><i class="fa fa-comments"></i><a href="#"> {{.ReplyCount}}</a></li>
+        <li><i class="glyphicon glyphicon-trash"></i><a href="/myajax/category/delete?id={{.Id}}" title="{{.Title}}"
+                                                        onclick="return OnDelte(this) ">
+            删除</a></li>
+        <li><i class="glyphicon glyphicon-pencil"></i><a href="/myajax/category/edit?id={{.Id}}"> 修改</a></li>
+    </ul>
+</div>
+{{end}}

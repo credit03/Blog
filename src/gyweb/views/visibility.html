@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>浏览文章</title>
+    <!-- Bootstrap -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/animate.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <!-- 必要js -->
+    <script src="/static/js/jquery-2.1.1.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <style>
+        /* Custom Styles */
+        ul.nav-tabs2 {
+            width: 140px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+        }
+
+        ul.nav-tabs2 li {
+            margin: 0;
+            border-top: 1px solid #ddd;
+        }
+
+        ul.nav-tabs2 li:first-child {
+            border-top: none;
+        }
+
+        ul.nav-tabs2 li a {
+            margin: 0;
+            padding: 8px 16px;
+            border-radius: 0;
+        }
+
+        ul.nav-tabs2 li.active a, ul.nav-tabs2 li.active a:hover {
+            color: #fff;
+            background: #0088cc;
+            border: 1px solid #0088cc;
+        }
+
+        ul.nav-tabs2 li:first-child a {
+            border-radius: 4px 4px 0 0;
+        }
+
+        ul.nav-tabs2 li:last-child a {
+            border-radius: 0 0 4px 4px;
+        }
+
+        ul.nav-tabs2.affix {
+            top: 100px; /* Set the top position of pinned element */
+        }
+    </style>
+
+</head>
+<body data-spy="scroll" data-target="#myScrollspy">
+{{template "navbar" .}}
+<div class="container">
+    <div class="jumbotron">
+        <h1>{{.Title}}</h1>
+        {{if .fail}}
+        {{.Content|str2html}}
+        {{else}}
+        <div class="container">
+            <ul class="list-inline">
+                <li><i class="fa fa-calendar"></i> {{getDateMH .Post.Created}}</li>
+                <li><i class="fa fa-user"></i><a href="/user/borwseinfo?uid={{.Post.Author.Id}}"> {{.Post.Author.NickName}}</a></li>
+                {{if eq .Post.SectionType 0}}
+                <li><i class="fa fa-folder-open"></i><a href="#"> 生活</a></li>
+                {{else}}
+                {{if eq .Post.SectionType 1}}
+                <li><i class="fa fa-folder-open"></i><a href="#"> 科技</a></li>
+                {{else}}
+                {{if eq .Post.SectionType 2}}
+                <li><i class="fa fa-folder-open"></i><a href="#"> 其他</a></li>
+                {{end}}
+                {{end}}
+                {{end}}
+                <li><i class="fa fa-comments"></i><a href="#"> {{.Post.ReplyCount}}</a></li>
+            </ul>
+        </div>
+        {{end}}
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+
+
+            <div class="panel">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs2 nav-stacked" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="/user/borwseinfo?uid={{.Post.Author.Id}}">
+                                <img src="{{.Post.Author.Pic}}" width="100px" hieght="100px" b alt="查看用户"/><br>
+                                <span><i class="glyphicon glyphicon-user"></i>&nbsp;{{.Post.Author.NickName}}</span>
+                                <h6>(点击查看用户)</h6>
+                            </a>
+                        </li>
+                        <!--<li role="presentation"><a href="/user/borwseinfo?uid={{.Post.Author.Id}}">&nbsp;<span><i
+                                class="glyphicon glyphicon-user"></i>&nbsp;查看用户</span></a>
+                        </li>-->
+                        <li role="presentation"><a href="#comment"> <span><span
+                                class="badge">{{.Post.BrowseCount}}</span>&nbsp;浏览次数</span></a>
+                        </li>
+                        <li role="presentation"><a href="#comment"> <span><span
+                                class="badge">{{.Post.Comments|len}}</span>&nbsp;我要评论</span></a>
+                        </li>
+                        <li role="presentation"><a onclick="back()">&nbsp;<span><i
+                                class="glyphicon glyphicon-share-alt"></i>&nbsp;返回上一级</span></a>
+                        </li>
+                        <li role="presentation"><a href="/">&nbsp;<span><i
+                                class="glyphicon glyphicon-chevron-left"></i>&nbsp;返回首页</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-9 panel panel-default">
+            {{if .fail}}
+            {{else}}
+            <br> <br>
+            <span class="label  label-primary">文章内容</span>
+            <br> <br>
+            {{.Post.Content|str2html}}
+            <hr>
+            <div style="margin-top: 80px">
+                <span class="label label-info"><span
+                        class="badge">{{.Post.Comments|len}}</span>&nbsp;评论列表</span>
+                <br><br>
+                <div>
+                    {{if gt (.Post.Comments|len) 0}}
+
+                    {{else}}
+                    <h3>暂没有评论</h3>
+                    {{end}}
+
+                </div>
+                <hr>
+                <form>
+                    <span class="label label-success">我要评论</span>
+                    <br> <br>
+                    <textarea class="form-control" rows="5"></textarea>
+                    <div class="form-group">
+                        <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">
+                            提交
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{template "footer" .}}
+
+<script>
+    function back() {
+        history.go(-1); //后退1页
+    }
+</script>
+</body>
+</html>

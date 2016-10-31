@@ -1,0 +1,144 @@
+{{template "header" .}}
+<title>Cre</title>
+<link rel="stylesheet" href="/static/css/font-awesome.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+<link href="/static/plugins/flexslider/flexslider.css" rel="stylesheet">
+</head>
+<body onload="checkKernel()">
+{{template "navbar" .}}
+<!-- 轮播图
+   ================================================== -->
+<div class="row">
+    <div class="col-md-12">
+        <article>
+            <div class="post-slider">
+                <!-- start flexslider -->
+                <div id="post-slider" class="postslider flexslider">
+                    <ul class="slides">
+                        {{range $i,$v:=.RollingPictureArr}}
+                        <li href="/browse_category?id={{.BlongPostId}}"
+                            onclick="OpenCate(this)">
+                            <img src="{{.ImageUrl}}" style="width: inherit;height: 520px" alt=""/>
+                            <div class="carousel-caption">
+                                <h1>{{.Title}}</h1>
+                                <p>{{.Describe}}</p>
+                            </div>
+                        </li>
+                        {{end}}
+                    </ul>
+                </div>
+                <!-- end flexslider -->
+            </div>
+        </article>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="text-center">
+                <h2>快乐源于生活</h2>
+                <p>送给所有缺乏动力的人...蜜汁魔性，看完感觉打了两桶鸡血<br>
+                    vestibulum volutpat libero sollicitudin vitae Curabitur ac aliquam <br>
+                    lorem sit amet scelerisque justo</p>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="box">
+            <div class="col-md-4">
+                <div class="wow bounceIn" data-wow-offset="0" data-wow-delay="0.4s">
+                    <h4>生活</h4>
+                    <div class="icon">
+                        <i class="fa fa-heart-o fa-3x"></i>
+                    </div>
+                    <div class="ficon">
+                        <a href='{{urlfor "CategoryController.Section"}}?op=0' class="btn btn-default" role="button">查看详细</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="wow bounceIn" data-wow-offset="0" data-wow-delay="1.0s">
+                    <h4>科技</h4>
+                    <div class="icon">
+                        <i class="fa fa-desktop fa-3x"></i>
+                    </div>
+                    <div class="ficon">
+                        <a href='{{urlfor "CategoryController.Section"}}?op=1' class="btn btn-default" role="button">查看详细</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="wow bounceIn" data-wow-offset="0" data-wow-delay="1.6s">
+                    <h4>发表</h4>
+                    <div class="icon">
+                        <i class="fa fa-location-arrow fa-3x"></i>
+                    </div>
+                    <div class="ficon">
+                        <a href="/?op=publish" class="btn btn-default" role="button">发表博客</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="text-center">
+                <h2>热点</h2>
+                <p>全网信息数据为基础,为您提供各个维度热门数据,自由筛选的排行榜,了解新颖、全面的社会动态信息,轻松获取更多实时热点!<br>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <!--Item 热点信息-->
+    {{range $i,$v:=.HotArr}}
+    {{if eq $i 0 2}}
+    <div class="content">
+        <div class="grid">
+            {{template "figure" .}}
+            {{else}}
+            {{if eq $i 1 3}}
+            {{template "figure" .}}
+            {{end}}
+        </div>
+    </div>
+    {{end}}
+    {{end}}
+</div>
+
+
+{{template "footer" .}}
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!-- 必要js -->
+<script src="/static/js/jquery-2.1.1.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<!-- 动态组件 -->
+<script src="/static/js/wow.min.js"></script>
+<script src="/static/js/jquery.isotope.min.js"></script>
+<script src="/static/js/jquery.bxslider.min.js"></script>
+<!--滚动轮播图片-->
+<script src="/static/plugins/flexslider/flexslider.config.js"></script>
+<script src="/static/plugins/flexslider/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="/static/js/fliplightbox.min.js"></script>
+<script src="/static/js/functions.js"></script>
+<script type="text/javascript">
+
+    function OpenCate(t) {
+        window.open($(t).attr("href"), "_self");
+    }
+
+</script>
+</body>
+</html>

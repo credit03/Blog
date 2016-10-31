@@ -1,0 +1,320 @@
+{{template "header" .}}
+<title>发布</title>
+<style>
+    .login-img3-body {
+        background: url('/static/img/26.jpg') no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+
+    .login-form {
+        background: rgba(213, 215, 222, 0.51);
+    }
+
+    .ma-top {
+        margin-top: 60px;
+    }
+
+    .ckbox {
+        visibility: hidden;
+    }
+</style>
+</head >
+<body class="login-img3-body">
+{{template "navbar" .}}
+<div class="container ma-top">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 login-form">
+
+            <div class="text-center">
+                <div class="hero-unit" style="margin-top:40px">
+                    <h1 style="font-size:28px">记录生活点滴
+                        <small>发表博客</small>
+                    </h1>
+                    <hr/>
+
+
+                    <div class="panel-body">
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form" method="post" action="./publish/toadd">
+                                {{.xsrfdata}}
+                                <div class="form-group">
+                                    <label for="title" class="col-lg-2 control-label">标题</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" id="title" name="title"
+                                               placeholder="title...">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="describe" class="col-lg-2 control-label">描述</label>
+                                    <div class="col-lg-10">
+                                        <textarea class="col-lg-12" rows="3" id="describe" name="describe"
+                                                  placeholder="描述.."></textarea>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2">版块分类</label>
+                                    <div class="col-lg-10">
+
+                                        <select class="form-control input-lg m-bot15" name="sectiontype">
+                                            <option value="0">生活</option>
+                                            <option value="1">科技</option>
+                                            <option value="2">其他</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                </section>
+                                <div class="form-group">
+                                    <div id="editor"></div>
+                                </div>
+                                <input type="text" hidden="hidden" id="pid" name="pid" value="0"/>
+                                <input type="text" hidden="hidden" id="contenttype" name="contenttype" value="0"/>
+                                <input type="text" hidden="hidden" id="content" name="content" value=""/>
+                                <input type="text" hidden="hidden" id="useimage" name="useimage" value=""/>
+                                <input type="text" hidden="hidden" id="nouseimage" name="nouseimage" value=""/>
+                                <input type="text" hidden="hidden" id="usevideo" name="usevideo" value=""/>
+                                <input type="text" hidden="hidden" id="nousevideo" name="nousevideo" value=""/>
+                                <input type="text" hidden="hidden" id="imagelabel" name="imagelabel" value=""/>
+
+
+                                <div class="form-group ckbox" id="ckbox">
+                                    <label class="control-label col-lg-2" for="ck1">图片标签</label>
+                                    <div class="col-lg-10 text-left">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" id="ck1" value=" web-design"
+                                                   checked="checked"> 设计
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" id="ck2" value=" graphic"> 风景
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" id="ck3" value=" logo"> Logo
+                                        </label>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-offset-2 col-lg-8">
+                                        <button type="submit" class="btn btn-danger" onclick="return SubPost()">发表
+                                        </button>
+                                       <!-- <button type="button" class="btn btn-info" onclick="return SubPost()">保存
+                                        </button>-->
+                                        <button type="button" class="btn btn-arning" onclick="return Clear()">清空
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body> {{template "footer" .}}
+<script src="/static/js/jquery-2.1.1.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/ckeditor/ckeditor.js"></script>
+<script src="/static/ckeditor/sample.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+
+    initSample();
+    var imgUrl = new Array();
+    var iamgeindex = 0;
+    var videoindex = 0;
+    /* var videoUrl = new Array();
+     var uuidArr = new Array();
+     */
+    function CallTouchImageUrl(u) {
+        imgUrl[iamgeindex] = u;
+        $("#ckbox").css("visibility", "visible");
+        iamgeindex++;
+    }
+
+    function CallImageUrl(u) {
+
+    }
+
+    var vurl = "";
+    var vuid = "";
+    function VideoUrl(url, uid) {
+        vurl = url;
+        vuid = uid;
+    }
+    /*function CallVideoUrl(url, uid) {
+     videoUrl[videoindex] = url;
+     uuidArr[videoindex] = uid;
+     videoindex++;
+     }*/
+
+    function SubPost() {
+
+        /**
+         * 从CKEditor取数据时，
+         代码如下:
+         var data_tc = CKEDITOR.instances['txt_editor_tc'].getData();
+
+         向CKEditor设置数据时，
+         代码如下:
+         CKEDITOR.instances['txt_editor_sc'].setData('test');
+         */
+        if ($("#title").val().length == 0) {
+            alert("标题不能为空!!!");
+            return false;
+        }
+        if ($("#describe").val().length == 0) {
+            $("#describe").val("这个人很懒，什么也没留下...");
+        }else if($("#describe").val().length>200){
+            alert("描述不能大于200字!!! 当前长度"+$("#describe").val().length);
+            return false
+        }
+
+        var str = CKEDITOR.instances.editor.getData();
+        str = trim(str);
+        if (str.length == 0) {
+            alert("内容不能为空!!!");
+            return false;
+
+        }
+        var categotytype = 0; //文章类型
+
+        //  var imgtmep = new Array();
+        var tempindex = 0;
+        var nouseimg = "", useimg = "";
+
+        if (iamgeindex > 0) {
+            for (i = 0; i < iamgeindex; i++) {
+                if (str.search(imgUrl[i]) == -1) {
+                    // imgtmep[tempindex] = imgUrl[i];
+                    nouseimg += imgUrl[i] + "#substr#";
+                    tempindex++;
+                } else {
+                    useimg += imgUrl[i] + "#substr#";
+                }
+            }
+
+
+            // if ((imgUrl.length - imgtmep.length) > 1) {
+            if ((imgUrl.length - tempindex) > 1) {
+                categotytype = 2;//多张图片
+                $("#useimage").val(useimg);
+            } else {
+                categotytype = 1;//单张图片
+                $("#useimage").val(useimg);
+            }
+
+            if (tempindex > 0) {
+                $("#nouseimage").val(nouseimg);
+            }
+        }
+
+        if (vurl.length > 0 && str.search(vuid) != -1) {
+            categotytype = 3;//视频
+            $("#usevideo").val(vurl);
+        }
+
+        /*      // var videotmep = new Array();
+         var nousevideo = "", usevideo = "";
+         var tempindex1 = 0;
+         if (videoindex > 0) {
+         for (i = 0; i < videoindex; i++) {
+         if (str.search(uuidArr[i]) == -1) {
+         nousevideo += videoUrl[i] + "#substr#";
+         tempindex1++;
+         } else {
+         usevideo += videoUrl[i] + "#substr#";
+         }
+         }
+         if (videoUrl.length - tempindex1 >= 1) {
+         categotytype = 3;//视频
+         $("#usevideo").val(usevideo);
+         }
+         if (tempindex1 > 0) {
+         $("#nousevideo").val(nousevideo);
+         }
+         }*/
+
+        var imglabel = "";
+
+        if (($("#ck1:checked").val() != null)) {
+            imglabel += $("#ck1:checked").val()
+        }
+        if (($("#ck2:checked").val() != null)) {
+            imglabel += $("#ck2:checked").val()
+        }
+        if (($("#ck3:checked").val() != null)) {
+            imglabel += $("#ck3:checked").val()
+        }
+
+        /* for (var i = 0; i < d.length; i++) {
+         alert(d[i].val())
+         }*/
+
+
+        $("#imagelabel").val(imglabel);
+        $("#contenttype").val(categotytype);
+        $("#content").val(str);
+        alert("文章类型" + categotytype);
+
+        return true;
+    }
+
+    function Clear() {
+        if (confirm("是否清空已输入所有内容（标题，描述，内容）") == true) {
+            $("#contenttype").val(0);
+            $("#content").val("");
+            $("#title").val("");
+            $("#describe").val("");
+            CKEDITOR.instances.editor.setData("");
+        }
+
+    }
+
+    //去掉空格
+    function trim(str) {
+        return str.replace("/(^/s*)|(/s*$)/g", "");
+    }
+
+    function UUID(len, radix) {
+        var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+        var uuid = [], i;
+        radix = radix || chars.length;
+
+        if (len) {
+            // Compact form
+            for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix];
+        } else {
+            // rfc4122, version 4 form
+            var r;
+
+            // rfc4122 requires these characters
+            uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+            uuid[14] = '4';
+
+            // Fill in random data.  At i==19 set the high bits of clock sequence as
+            // per rfc4122, sec. 4.1.5
+            for (i = 0; i < 36; i++) {
+                if (!uuid[i]) {
+                    r = 0 | Math.random() * 16;
+                    uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+                }
+            }
+        }
+
+        return uuid.join('');
+    }
+
+
+</script>
+</body>
+</html >

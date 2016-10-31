@@ -1,0 +1,345 @@
+{{template "header" .}}
+<title>分类</title>
+<link rel="stylesheet" href="/static/css/font-awesome.css">
+<link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+<link href="/static/css/table-responsive.css" rel="stylesheet">
+<link href="/static/css/cubeportfolio.min.css" rel="stylesheet">
+<link href="/static/css/clndr.css" rel="stylesheet">
+<link href="/static/plugins/flexslider/flexslider.css" rel="stylesheet">
+
+<style type="text/css">
+    .testbox {
+        height: 50px;
+        display: none;
+
+    }
+</style>
+</head>
+<body style="background-color: #EFF0F4">
+
+{{template "navbar" .}}
+<div class="container">
+    <div class="panel">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="blogs">
+                        <div class="text-center">
+                            <h2>文章CateGory</h2>
+                            <p> 拥有梦想的人是值得尊敬的，也让人羡慕。当大多数人碌碌而为为现实奔忙的时候，坚持下去，不用害怕与众不同，你该有怎么样的人生，是该你亲自去撰写的。加油!让我们一起捍卫最初的梦想。
+                            </p>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel">
+                <div class="panel-body">
+                    {{template "swithblack" .}}
+                    {{if gt (.HotBlog|len) 0}}
+
+                    <form class="form-search" id="form-search" action='{{urlfor "CategoryController.AjaxSearch"}}'
+                          method="post">
+                        <div class="panel-heading">
+                            <input type="text" name="autocomplete" id="autocomplete" placeholder="Search.."
+                                   class="form-control"/>
+                            <br>
+                            <input type="submit" class="btn btn-primary" value="Search" onclick="return checktrim()"/>
+                        </div>
+                    </form>
+
+                    <div class="panel panel-default" id="mypanel">
+                        <div class="panel-heading">
+                            <strong>热门文章</strong>
+                        </div>
+
+                        {{range .HotBlog}}
+                        <div class="panel-body">
+
+                            <div class="media">
+                                <a class="media-left" href="#panel">
+                                    <img src="{{.Author.Pic}}" width="64px" height="64px" alt="">
+                                </a>
+                                <div class="media-body">
+                                    <h4 class="media-heading">{{.Title}}</h4>
+                                </div>
+                                <p class="hotp">
+                                    {{.Describe}}</p>
+                                <div class="pull-right">
+                                    <a href="/browse_category?id={{.Id}}" alt="">查看详细</a>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        {{end}}
+                    </div>
+                    {{end}}
+
+                    <div class="testbox">
+                        <div class="info"></div>
+                        {{template "swithblack" .}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8" id="con-md">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="col-md-offset-1">
+                        {{if gt (.PostArr|len) 0}}
+                        {{range .PostArr}}
+
+                        {{if eq .ContentType 0}}
+                        {{template "textitem" .}}
+                        {{else}}
+                        {{if eq .ContentType 1}}
+                        {{template "aimgitem" .}}
+                        {{else}}
+                        {{if eq .ContentType 2}}
+                        {{template "moreimgitem" .}}
+                        {{else}}
+                        {{if eq .ContentType 3}}
+                        {{template "videoitem" .}}
+                        {{end}}
+                        {{end}}
+                        {{end}}
+                        {{end}}
+                        {{if $.CuerrentUser.IsAdmin}}
+                        <!-- Split button -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                                管理员操作 <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                {{if eq .ContentType 1 2}}
+                                <li><a title="{{.Title}}" CateId="{{.Id}}"
+                                       onclick="return setTop(this)">设置头条</a></li>
+                                {{end}}
+                                <li class="divider"></li>
+                                <li><a href="/myajax/category/delete?id={{.Id}}"
+                                       title="{{.Title}}"
+                                       onclick="return OnDelte(this)">删除</a></li>
+                                <li class="divider"></li>
+                                <li><a
+                                        href="/myajax/category/edit?id={{.Id}}">
+                                    修改</a></li>
+                            </ul>
+                        </div>
+                        {{end}}
+                        <hr>
+                        {{end}}
+                        {{else}}
+                        <h1>查找不到关键字内容...</h1>
+                        {{end}}
+                        <div class="text-center">
+                            <div class="row">
+                                {{if gt .PageLimit.IndexCount 1}}
+                                <nav>
+                                    <ul class="pagination">
+                                        {{if ge .PageLimit.CurrentIndex 2}}
+                                        <li>
+                                            <a href='{{urlfor "CategoryController.PageIndex"}}?form=category&op=Previous&index={{.PageLimit.CurrentIndex}}'><span
+                                                    aria-hidden="true">&laquo;</span><span
+                                                    class="sr-only">Previous</span></a>
+                                        </li>
+                                        {{end}}
+                                        {{range $i,$v:=.PageLimit.IndexArr}}
+                                        <li {{if eq $v $.PageLimit.CurrentIndex}}class="active" {{end}}><a
+                                                href='{{urlfor "CategoryController.PageIndex"}}?form=category&op=Index&index={{$v}}'
+                                                selectCurr="{{$.PageLimit.CurrentIndex}}" value="{{$v}}"
+                                                onclick="return Eq(this)">{{$v}}</a></li>
+                                        {{end}}
+                                        {{if lt .PageLimit.CurrentIndex .PageLimit.IndexCount}}
+                                        <li>
+                                            <a href='{{urlfor "CategoryController.PageIndex"}}?form=category&op=Next&index={{.PageLimit.CurrentIndex}}'><span
+                                                    aria-hidden="true">&raquo;</span><span
+                                                    class="sr-only">Next</span></a>
+                                        </li>
+                                        {{end}}
+                                    </ul>
+                                </nav>
+                                {{end}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "inc/modal.tpl" .}}
+{{template "footer" .}}
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/static/js/jquery-2.1.1.min.js"></script>
+<!-- Include /static/all compiled plugins (below), or include individual files as needed -->
+<script src="/static/js/bootstrap.min.js"></script>
+
+<script src="/static/plugins/flexslider/flexslider.config.js"></script>
+<script src="/static/plugins/flexslider/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="/static/js/fliplightbox.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui.js"></script>
+<script src="/static/js/functions.js"></script>
+<script type="text/javascript">
+    function setTop(val) {
+        $('#myModalLabel').text("设置\"" + val.title + "\"文章为头条");
+        $('#categoryid').val($(val).attr("CateId"));
+        $('#myModal').modal({
+            keyboard: true
+        })
+    }
+
+    function SubTop(val) {
+
+        $('#myModal').modal('hide');
+
+        $('#myLoad').modal('show');
+        var url = "/myajax/setrollingpicture";
+        var args = {"pid": $('#categoryid').val(), posindex: getRadioCheck(), time: new Date()}
+
+        $.getJSON(url, args, function (data) {
+            var msg = data.Msg;
+            var ok = data.Ok;
+            $('#myLoadLabel').text("设置结果状态码：" + ok);
+            $('#myLoadmsg').html("<h1>" + msg + "</h1>" +
+                    "<b>3秒后自动关闭</b>");
+            setTimeout("$('#myLoad').modal('hide')", 3000)
+        });
+
+
+        return false
+    }
+
+    function getRadioCheck() {
+        var obj;
+        obj = document.getElementsByName("optionsRadiosinline");
+        if (obj != null) {
+            var i;
+            for (i = 0; i < obj.length; i++) {
+                if (obj[i].checked) {
+                    return obj[i].value;
+                }
+            }
+        }
+    }
+
+    $('.portfolio').flipLightBox()
+    $('#myTab a').click(function (e) {
+
+        e.preventDefault()
+        // $(this).tab('show')
+        openhref($(this).attr("href"))
+    })
+
+    function Eq(t) {
+        if ($(t).attr("selectCurr") == $(t).attr("value")) {
+            return false;
+        }
+        return true;
+    }
+    function checktrim() {
+        var uname = document.getElementById("autocomplete");
+        if (uname.value.length < 3) {
+            return false;
+        }
+    }
+
+    $("#autocomplete").autocomplete(
+            {
+                source: "/ajaxautotip",
+                minLength: 1
+            }
+    );
+
+    $(".hotp").each(function () {
+        var s = $(this).text()
+        if (s.length > 128) {
+            $(this).text(s.substring(0, 128) + " ...");
+        }
+        ;
+    });
+
+    function OnDelte(va) {
+        var b = window.confirm("是否删除该文章 \"" + va.title + "\"");
+        return b;
+    }
+
+
+    var oInfo = $(".info");
+    var oTop = 1500;
+    var sTop = 0;
+    $(window).scroll(function () {
+        sTop = $(this).scrollTop();
+        h = $('#con-md').height()
+       // oInfo.text("sTop:" + sTop + 'oTop:' + oTop + "height:" + h + "offset" + $(".testbox").height());//这一句 只是为了看看数据 没有多大的用处
+        if (sTop >= oTop) {
+            if (sTop > h) {
+                $(".testbox").css({"position": "static"});
+            } else {
+                $(".testbox").css({"position": "fixed", "top": "80px", "width": "320px"});
+                $(".testbox").show();
+            }
+
+        } else {
+            $(".testbox").css({"position": "static"});
+            $(".testbox").hide();
+        }
+    });
+</script>
+</body>
+</html>
+
+{{define "swithblack"}}
+<div style="background: #9d9d9d">
+    <ul class="nav nav-pills nav-stacked" id="myTab" role="tablist">
+        <li role="presentation" {{if .AllActive}}class="active" {{end}}><a
+                href='{{urlfor "CategoryController.Section"}}?op=-1&type=SectionType'> <span
+                class="badge">{{.All}}</span>
+            全部文章</a></li>
+        <li role="presentation" {{if .TechnologyActive}}class="active" {{end}}><a
+                href='{{urlfor "CategoryController.Section"}}?op=1&type=SectionType'> <span
+                class="badge">{{.Technology}}</span>
+            科技</a></li>
+        <li role="presentation" {{if .LifeActive}}class="active" {{end}}><a
+                href='{{urlfor "CategoryController.Section"}}?op=0&type=SectionType'> <span
+                class="badge">{{.Life}}</span>
+            生活</a></li>
+        <li role="presentation" {{if .OtherActive}}class="active" {{end}}><a
+                href='{{urlfor "CategoryController.Section"}}?op=2&type=SectionType'> <span
+                class="badge">{{.Other}}</span>
+            其他</a></li>
+
+        <li role="presentation" class="dropdown" {{if .OtherActive}}class="active" {{end}}>
+            <a class="dropdown-toggle" data-toggle="dropdown">
+                <span class="badge"><b class="glyphicon glyphicon-align-justify"></b></span>更多分类
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href='{{urlfor "CategoryController.Section"}}?op=0&type=ContentType'>文本文章</a></li>
+                <li class="divider"></li>
+                <li><a href='{{urlfor "CategoryController.Section"}}?op=1&type=ContentType'>图片文章</a></li>
+                <li class="divider"></li>
+                <li><a href='{{urlfor "CategoryController.Section"}}?op=2&type=ContentType'>视频文章</a></li>
+
+            </ul>
+        </li>
+
+
+        {{if .SearchActive}}
+        <li role="presentation" {{if .SearchActive}}class="active" {{end}}><a
+                href='#myTab'> <span
+                class="badge">{{.Search}}</span>
+            查找的内容
+        </a>
+        </li>
+        {{end}}
+    </ul>
+</div>
+{{end}}
+

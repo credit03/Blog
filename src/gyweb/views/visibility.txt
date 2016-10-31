@@ -1,0 +1,121 @@
+{{template "header" .}}
+<title>{{.Title}}</title>
+<style>
+    .mycontent {
+        margin-bottom: 50px;
+    }
+
+    .mycontent img {
+        margin-bottom: 10px;
+        max-width: 850px;
+        max-height: 480px;
+    }
+
+    .mycontent h1 {
+        font-size: 32px;
+    }
+
+    .top {
+        margin-left: 50px;
+        margin-top: 80px;
+        padding: 10px;
+    }
+
+</style>
+</head>
+<body style="background-color: #EFF0F4">
+{{template "navbar" .}}
+<div class="top">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="panel">
+                <div class="panel-body">
+                    <div style="background: #9d9d9d">
+                        <ul class="nav nav-pills nav-stacked" id="myNav" role="tablist">
+                            <li role="presentation" class="active">
+                                <a href="#">
+                                    <img src="{{.Post.Author.Pic}}" width="100px" hieght="100px"/><br>
+                                    <div class="badge text-center">
+                                        {{.Post.Author.Name}}
+                                    </div>
+                                </a>
+                            </li>
+                            <li role="presentation"><a href="#comment"> <span><span
+                                    class="badge">3</span>&nbsp;点赞</span></a>
+                            </li>
+                            <li role="presentation"><a href="#comment"> <span><span
+                                    class="badge">5</span>&nbsp;我要评论</span></a>
+                            </li>
+                            <li role="presentation"><a href="/">&nbsp;<span><i
+                                    class="glyphicon glyphicon-chevron-left"></i>&nbsp;返回首页</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="mycontent">
+                <div class="panel">
+                    <div class="panel-body">
+
+                        <h1>{{.Title}}</h1>
+
+                        {{if .fail}}
+                        {{.Content|str2html}}
+                        {{else}}
+
+                        <div class="container">
+                            <ul class="list-inline">
+                                <li><i class="fa fa-calendar"></i> {{.Post.Created}}</li>
+                                <li><i class="fa fa-user"></i><a href="#"> {{.Post.Author.Name}}</a></li>
+                                {{if eq .Post.SectionType 0}}
+                                <li><i class="fa fa-folder-open"></i><a href="#"> 生活</a></li>
+                                {{else}}
+                                {{if eq .Post.SectionType 1}}
+                                <li><i class="fa fa-folder-open"></i><a href="#"> 科技</a></li>
+                                {{else}}
+                                {{if eq .Post.SectionType 2}}
+                                <li><i class="fa fa-folder-open"></i><a href="#"> 其他</a></li>
+                                {{end}}
+                                {{end}}
+                                {{end}}
+                                <li><i class="fa fa-comments"></i><a href="#"> {{.Post.ReplyCount}}</a></li>
+                            </ul>
+                        </div>
+                        <hr>
+                        {{.Post.Content|str2html}}
+                        {{end}}
+                        <hr>
+                        <form >
+                           <h2 id="comment">我要评论</h2>
+                            <textarea class="form-control" rows="5"></textarea>
+                            <div class="form-group">
+                                <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">
+                                    提交
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mybottom"></div>
+{{template "footer" .}}
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/static/js/jquery-2.1.1.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<!--<script>
+
+    $(document).ready(function () {
+        $("#myNav").affix({
+            offset: {
+                top: 125
+            }
+        });
+    });
+</script>-->
+</body>
+</html>

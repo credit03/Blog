@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>用户操作</title>
+    <script type="text/javascript">
+        function toHome() {
+            window.location.href = "/"
+        }
+        function checktrim() {
+            var uname = document.getElementById("uname1");
+            if (uname.value.length == 0) {
+                window.alert("请输入帐号");
+                return false;
+            }
+
+            var pwd = document.getElementById("pwd1");
+            if (pwd.value.length == 0) {
+                window.alert("请输入密码");
+                return false;
+            }
+        }
+
+
+        function checkregist() {
+            var uname = document.getElementById("uname");
+            if (uname.value.length == 0) {
+                window.alert("请输入帐号");
+                return false;
+            }
+
+            var pwd = document.getElementById("pwd");
+            if (pwd.value.length == 0) {
+                window.alert("请输入密码");
+                return false;
+            }
+            var anginpwd = document.getElementById("anginpwd");
+            if (anginpwd.value.length == 0) {
+                window.alert("请输入再次密码");
+                return false;
+            }
+            if (anginpwd.value != pwd.value) {
+                window.alert("两次密码不一样");
+                return false;
+            }
+        }
+
+    </script>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-theme.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/style-responsive.css">
+    <link href="/static/css/elegant-icons-style.css" rel="stylesheet">
+    <style>
+
+        .login-img-body {
+
+            background: url('/static/img/bg-2.jpg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        .login-img1-body {
+
+            background: url('/static/img/bg-1.jpg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto 0;
+            background: rgba(213, 215, 222, 0.38);
+        }
+
+        .login-wrap {
+            padding: 20px;
+        }
+
+        .login-form .login-img {
+            font-size: 50px;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .login-form .login-title {
+            font-size: 28px;
+            font-weight: 100;
+            color: white;
+            text-align: center;
+        }
+
+    </style>
+</head>
+{{if .register}}
+<body class="login-img-body">
+{{else}}
+<body class="login-img1-body">
+{{end}}
+<div class="container">
+    {{if .register}}
+
+    <form class="login-form" method="POST" action="./register">
+        {{ .xsrfdata }}
+        <div class="login-wrap">
+            <p class="login-title">注册</p>
+            <p class="login-img"><i class="icon_lock_alt"></i></p>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="icon_profile"></i></span>
+                <input type="text" class="form-control" id="uname" name="uname" placeholder="Username" autofocus>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Password">
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                <input type="password" class="form-control" id="anginpwd" name="anginpwd" placeholder="AnginPassword">
+            </div>
+            {{if .err}}
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>{{.errmsg}}</strong>
+            </div>
+            {{end}}
+            <br>
+            <button class="btn btn-primary btn-lg btn-block" type="submit" onclick="return checkregist()">注册</button>
+            <button class="btn btn-info btn-lg btn-block" type="button" onclick="return toHome()">返回首页</button>
+        </div>
+    </form>
+
+    {{else}}
+    <form class="login-form" method="POST" action="./login" id="user">
+        {{ .xsrfdata}}
+        <div class="login-wrap">
+            <p class="login-title">登录</p>
+            <p class="login-img"><i class="icon_lock_alt"></i></p>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="icon_profile"></i></span>
+                <input type="text" class="form-control" id="uname1" name="uname" placeholder="Username" autofocus>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                <input type="password" class="form-control" id="pwd1" name="pwd" placeholder="Password">
+            </div>
+            {{if .err}}
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>帐号或密码错误!</strong>
+            </div>
+            {{end}}
+            <div class="input-group">
+                <label class="pull-right"> <a href="./loginpage?type=register">还没有帐号注册？</a></label>
+            </div>
+            <label class="input-group">
+                <input type="checkbox" value="remember-me" name="autologin"/> 下次自动登录
+            </label>
+
+            <button class="btn btn-primary btn-lg btn-block" type="submit" onclick="return checktrim()">登录</button>
+            <button class="btn btn-info btn-lg btn-block" type="button" onclick="return toHome()">返回首页</button>
+        </div>
+    </form>
+    {{end}}
+
+</div>
+
+<script src="http://cdn.staticfile.org/jquery/2.2.1/jquery.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/bootstrap-alert.js"></script>
+</body>
+</html>
